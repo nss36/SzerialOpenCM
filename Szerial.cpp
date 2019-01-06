@@ -1,7 +1,8 @@
 /*
-  Szerial.cpp - Library for interfacing with AnimatLab.
+  Szerial.cpp - Library for interfacing a robot with AnimatLab.
   Based on AnimatSerial, originally written by:
   Copyright (c) 2015 David Cofer, NeuroRobotic Technologies.  All right reserved.
+  Modified by Nick Szczecinski, 2018, Case Western Reserve University.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
