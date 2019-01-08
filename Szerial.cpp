@@ -28,6 +28,7 @@ Szerial::Szerial(){
     status = 0;
 	stream = NULL;
 	
+	numServos = 0;
 	inDataTotal = 0;
 	outDataTotal = 0;
 	inDataCount = 0;
@@ -41,13 +42,13 @@ Szerial::Szerial(){
 	packetSize = 0;
 }
 
-Szerial::Szerial(USBSerial *ss, unsigned int inTotal, unsigned int outTotal){
+Szerial::Szerial(USBSerial *ss, unsigned int numServos, unsigned int inAnalog, unsigned int outAnalog){
     index = -1;
     status = 0;
 	stream = ss;
 	
-	inDataTotal = inTotal;
-	outDataTotal = outTotal;	
+	inDataTotal = numServos+inAnalog;
+	outDataTotal = numServos+outAnalog;	
 	inDataCount = 0;
 	outDataCount = 0;
 	
@@ -57,12 +58,24 @@ Szerial::Szerial(USBSerial *ss, unsigned int inTotal, unsigned int outTotal){
 	if(inDataTotal > 0)
 	{
 		inData = new AnimatData[inDataTotal];
+		inIDs = new unsigned int[inDataTotal];
 		inChanged = new bool[inDataTotal];
+		for(int i=0;i<numServos;i++)
+			inIDs[i] = i;
+		for(int i=0;i<inAnalog;i++)
+			inIDs[numServos+i] = 200+i;
 	}
 		
 	if(outDataTotal > 0)
+	{
 		outData = new AnimatData[outDataTotal];
-		
+		outIDs = new unsigned int[outDataTotal];
+		for(int i=0;i<numServos;i++)
+			outIDs[i] = i;
+		for(int i=0;i<outAnalog;i++)
+			outIDs[numServos+i] = 100+i;
+	}
+	
 	clearInData();
 	clearChanged();
 	clearOutData();
@@ -153,12 +166,14 @@ bool Szerial::addData(unsigned int id, int val)
 
 void Szerial::setInDataValue(int id, int val) 
 {
-	if(inData && inChanged && id < inDataTotal)
+	unsigned int i = inputContains(id);
+	if(inData && inChanged && i != 255)
 	{
-		inData[id].value.ival = val;
-		inChanged[id] = true;
+		//Serial3.println("SAVED");
+		inData[i].id.ival = id;
+		inData[i].value.ival = val;
+		inChanged[i] = true;
 		dataChanged = true;
-		
 	}
 }
 
@@ -258,11 +273,18 @@ int Szerial::readMsgs()
 						{
 							int iStop = packetSize - 1; //Exclude the checksum at the end
 
-							for(int iIdx=START_MESSAGE_INFO_BYTE; iIdx<iStop; iIdx+=DATA_SIZE)
+							for(int iIdx=HEADER_SIZE; iIdx<iStop; iIdx+=DATA_SIZE)
 							{
 								id.bval = vals[iIdx];
 								value.bval[0] = vals[iIdx+1];
 								value.bval[1] = vals[iIdx+2];
+								
+								/*
+								Serial3.print("ID: ");
+								Serial3.print(id.ival);
+								Serial3.print(" VAL: ");
+								Serial3.println(value.ival);
+								*/
 								
 								//Message successfully decoded
 								//Save the value in the structure used to save servo data.
@@ -315,6 +337,13 @@ void Szerial::writeMsgs(){
 			stream->write((byte) outData[i].value.bval[0]);
 			stream->write((byte) outData[i].value.bval[1]);
 			
+			/*
+			Serial3.print("ID: ");
+			Serial3.print(outData[i].id.ival);
+			Serial3.print(" VAL: ");
+			Serial3.println(outData[i].value.ival);
+			*/
+			
 			checksum += outData[i].id.bval;
 			checksum += outData[i].value.bval[0];
 			checksum += outData[i].value.bval[1];
@@ -365,4 +394,35 @@ bool Szerial::getSimStarting(){
 
 void Szerial::setSimStartingFalse(){
 	simStarting = false;
+}
+
+int Szerial::getAnalogInIndex(unsigned int index)
+{
+	if(index < numAnalogInIndices)
+	{
+		return analogInIndices[index];
+	}
+	return 255;
+}
+
+
+int Szerial::getAnalogOutIndex(unsigned int index)
+{
+	if(index < numAnalogOutIndices)
+	{
+		return analogOutIndices[index];
+	}
+	return 255;
+}
+
+unsigned int Szerial::inputContains(unsigned int id)
+{
+	for(int i=0;i<inDataTotal;i++)
+	{
+		if(id == inIDs[i])
+		{
+			return i;
+		}
+	}
+	return 255;
 }

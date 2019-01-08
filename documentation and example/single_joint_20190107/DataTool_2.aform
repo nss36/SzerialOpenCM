@@ -1,0 +1,70 @@
+<Form>
+<Form>
+<ID>b10ea111-390e-4335-b967-e568b387db73</ID>
+<Title>DataTool_2</Title>
+<TabPageName>DataTool_2</TabPageName>
+<AssemblyFile>LicensedAnimatGUI.dll</AssemblyFile>
+<ClassName>LicensedAnimatGUI.Forms.Charts.LineChart</ClassName>
+<AutoCollectInterval>True</AutoCollectInterval>
+<CollectDataInterval Value="0.1" Scale="milli" Actual="0.0001"/>
+<CollectTimeWindow Value="11" Scale="None" Actual="11"/>
+<UpdateDataInterval Value="200" Scale="milli" Actual="0.2"/>
+<SetStartEndTime>True</SetStartEndTime>
+<CollectStartTime Value="0" Scale="None" Actual="0"/>
+<CollectEndTime Value="10" Scale="None" Actual="10"/>
+<AxisList>
+<Axis>
+<AssemblyFile>LicensedAnimatGUI.dll</AssemblyFile>
+<ClassName>LicensedAnimatGUI.DataObjects.Charting.Pro2DAxis</ClassName>
+<Name>Y Axis 1</Name>
+<WorkingAxis>0</WorkingAxis>
+<DataColumns/>
+</Axis>
+<Axis>
+<AssemblyFile>LicensedAnimatGUI.dll</AssemblyFile>
+<ClassName>LicensedAnimatGUI.DataObjects.Charting.Pro2DAxis</ClassName>
+<Name>Y Axis 2</Name>
+<WorkingAxis>1</WorkingAxis>
+<DataColumns/>
+</Axis>
+<Axis>
+<AssemblyFile>LicensedAnimatGUI.dll</AssemblyFile>
+<ClassName>LicensedAnimatGUI.DataObjects.Charting.Pro2DAxis</ClassName>
+<Name>Y Axis 3</Name>
+<WorkingAxis>2</WorkingAxis>
+<DataColumns/>
+</Axis>
+<Axis>
+<AssemblyFile>LicensedAnimatGUI.dll</AssemblyFile>
+<ClassName>LicensedAnimatGUI.DataObjects.Charting.Pro2DAxis</ClassName>
+<Name>Y Axis 4</Name>
+<WorkingAxis>3</WorkingAxis>
+<DataColumns>
+<DataColumn>
+<AssemblyFile>LicensedAnimatGUI.dll</AssemblyFile>
+<ClassName>LicensedAnimatGUI.DataObjects.Charting.Pro2DColumn</ClassName>
+<Name>Chordotonal Stretch</Name>
+<ID>71932b1d-3182-4030-9f97-ba825b909f9e</ID>
+<DataItemAssemblyFile>IntegrateFireGUI.dll</DataItemAssemblyFile>
+<DataItemClassName>IntegrateFireGUI.DataObjects.Behavior.Neurons.NonSpiking</DataItemClassName>
+<StructureID>9cbbe8b4-4887-4eed-84b0-0737a7e317dd</StructureID>
+<DataItemID>5dd4ee04-6c1d-45af-b08f-bf94ed1cc3c4</DataItemID>
+<SelectedDataType>MembraneVoltage</SelectedDataType>
+<DataSubSet>4</DataSubSet>
+<PrevDataSubset>4</PrevDataSubset>
+<UseIncomingDataType>False</UseIncomingDataType>
+<LineType>MediumSolid</LineType>
+<PointType>Plus</PointType>
+<PlotMethodType>Line</PlotMethodType>
+<LineColor>-256</LineColor>
+</DataColumn>
+</DataColumns>
+</Axis>
+</AxisList>
+<SaveDataWhenClosed>False</SaveDataWhenClosed>
+<UpdateChartAtEnd>True</UpdateChartAtEnd>
+<PointsToKeep>110000</PointsToKeep>
+<YAxisOffset>0</YAxisOffset>
+<GraphConfig ByteCount="8971"/>
+</Form>
+</Form>

@@ -24,10 +24,6 @@
 
 #include "USBSerial.h"
 
-#define HEADER_SIZE 4
-#define DATA_SIZE 3
-#define FOOTER_SIZE 1
-
 #define MAX_ANIMAT_BUFFER 128
 #define AX_SLOPE 195.5695940713210
 #define AX_OFFSET 512
@@ -38,9 +34,12 @@
 //Sentence structure:
 //255, 255 (start), 1 (new info incoming), X (total length of message), A (component ID), B, C (2 byte data), Y (checksum)
 //Each comma marks the end of the byte. The example above contains 8 bytes. The text in parentheses is a description. 
-#define PACKET_INFO_SIZE 5  //Size of the header (2), packet size(1), message id(1), and checksum(1) in bytes
-#define START_MESSAGE_INFO_BYTE 4 //Byte in the sentence at which the data begins.
+//#define PACKET_INFO_SIZE 5  //Size of the header (2), packet size(1), message id(1), and checksum(1) in bytes
+//#define START_MESSAGE_INFO_BYTE 4 //Byte in the sentence at which the data begins.
+#define HEADER_SIZE 4 //Size of the start (2), message ID (1), and packet size (1).
 #define DATA_SIZE 3	//Size of the ID (1) and the data (2).
+#define FOOTER_SIZE 1 //Size of the checksum (1).
+
 	
 //AnimatData will store the data that needs to be sent back and forth. It will store it as a union
 //so it can be accessed as an integer or unsigned character (for transmission).
@@ -73,7 +72,7 @@ class Szerial
 {    
   public:
     Szerial(); 
-	Szerial(USBSerial *ss, unsigned int inTotal, unsigned int outTotal); 
+	Szerial(USBSerial *ss, unsigned int numServos, unsigned int inTotal, unsigned int outTotal); 
 	~Szerial();
 	
     void begin(unsigned long baud);
@@ -91,8 +90,13 @@ class Szerial
 	
 	unsigned int getInDataTotal() {return inDataTotal;}
 	unsigned int getOutDataTotal() {return outDataTotal;}
+	unsigned int* getInIDs() {return inIDs;}
+	unsigned int* getOutIDs() {return outIDs;}
 	
 	void clearChanged();
+	
+	int getAnalogInIndex(unsigned int index);
+	int getAnalogOutIndex(unsigned int index);
 
 	private:
 
@@ -105,12 +109,18 @@ class Szerial
 	AnimatData *outData;
 	bool *inChanged;
 	bool dataChanged;
+	unsigned int *inIDs;
+	unsigned int *outIDs;
 	
+	unsigned int numServos;
 	unsigned int inDataTotal;
 	unsigned int outDataTotal;
 
 	unsigned int inDataCount;
 	unsigned int outDataCount;
+	
+	unsigned int inputContains(unsigned int id);
+	//bool outputContains(unsigned int id);
 
 	// internal variables used for reading messages
     unsigned char vals[MAX_ANIMAT_BUFFER];  // temporary values, moved after we confirm checksum
@@ -122,6 +132,12 @@ class Szerial
 	int packetSize;
 	
 	bool simStarting = false;
+	
+	//These values are microcontroller-specific.
+	const int analogInIndices[5] = {5,6,7,8,9};
+	const int numAnalogInIndices = 5;
+	const int analogOutIndices[5] = {0,1,2,3,4};
+	const int numAnalogOutIndices = 5;
 	
 	union id_tag {
 	 unsigned char bval;
