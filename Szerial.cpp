@@ -167,9 +167,16 @@ bool Szerial::addData(unsigned int id, int val)
 void Szerial::setInDataValue(int id, int val) 
 {
 	unsigned int i = inputContains(id);
+	/*
+	Serial3.print("set in data value ");
+	Serial3.print(id);
+	Serial3.print(" ");
+	Serial3.print(val);
+	Serial3.print(" ");
+	Serial3.println(id);
+	*/
 	if(inData && inChanged && i != 255)
 	{
-		//Serial3.println("SAVED");
 		inData[i].id.ival = id;
 		inData[i].value.ival = val;
 		inChanged[i] = true;
@@ -265,7 +272,7 @@ int Szerial::readMsgs()
 						if(messageID == 3)
 						{
 							simStarting = true;
-							Serial3.println("SIM IS STARTING!");
+							return 2;
 						}
 						else if(messageID == 2)
 							writeAllMsgs();
@@ -337,12 +344,12 @@ void Szerial::writeMsgs(){
 			stream->write((byte) outData[i].value.bval[0]);
 			stream->write((byte) outData[i].value.bval[1]);
 			
-			/*
+			Serial3.print("Write to AnimatLab: ");
 			Serial3.print("ID: ");
 			Serial3.print(outData[i].id.ival);
 			Serial3.print(" VAL: ");
 			Serial3.println(outData[i].value.ival);
-			*/
+			
 			
 			checksum += outData[i].id.bval;
 			checksum += outData[i].value.bval[0];
@@ -382,7 +389,9 @@ void Szerial::writeAllMsgs(){
 	//Serial.println("Writing resend message");
 	if(stream != NULL && outDataTotal > 0) {
 		for(int i=0; i<outDataTotal; i++)
+		{
 			addData(i, outData[i].value.ival);
+		}
 			
 		writeMsgs();
 	}

@@ -31,6 +31,29 @@
 #define MX_OFFSET 2048
 #define TRANSMISSION_THRESHOLD 2 //0, send every update. 1, only if it changes. Any higher number will make updates less frequent.
 
+// Control table address (AX-12)
+#define ADDR_MODEL_NUMBER         0
+#define ADDR_ID                   3
+#define ADDR_RETURN_DELAY_TIME    5
+#define ADDR_CW_LIMIT             6
+#define ADDR_CCW_LIMIT            8
+#define ADDR_TEMP_LIMIT           11
+#define ADDR_MAX_TORQUE           14
+#define ADDR_ALARM_LED            17
+#define ADDR_ALARM_SHUTDOWN       18
+#define ADDR_TORQUE_ENABLE        24
+#define ADDR_LED_ON               25
+#define ADDR_CW_SLOPE             28
+#define ADDR_P_GAIN               28
+#define ADDR_CCW_SLOPE            29
+#define ADDR_GOAL_POSITION        30
+#define ADDR_PRESENT_POSITION     36
+#define ADDR_PRESENT_SPEED        38  
+#define ADDR_PRESENT_LOAD         40
+#define ADDR_PRESENT_VOLT         42
+#define ADDR_PRESENT_TEMP         43
+#define ADDR_IS_MOVING            46
+
 //Sentence structure:
 //255, 255 (start), 1 (new info incoming), X (total length of message), A (component ID), B, C (2 byte data), Y (checksum)
 //Each comma marks the end of the byte. The example above contains 8 bytes. The text in parentheses is a description. 
