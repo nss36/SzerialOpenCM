@@ -344,12 +344,13 @@ void Szerial::writeMsgs(){
 			stream->write((byte) outData[i].value.bval[0]);
 			stream->write((byte) outData[i].value.bval[1]);
 			
+			/*
 			Serial3.print("Write to AnimatLab: ");
 			Serial3.print("ID: ");
 			Serial3.print(outData[i].id.ival);
 			Serial3.print(" VAL: ");
 			Serial3.println(outData[i].value.ival);
-			
+			*/
 			
 			checksum += outData[i].id.bval;
 			checksum += outData[i].value.bval[0];
