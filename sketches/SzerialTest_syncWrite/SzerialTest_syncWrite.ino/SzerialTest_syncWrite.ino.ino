@@ -239,6 +239,67 @@ void setup() {
     {
       waiting = false;
     }
+    
+    for(int i=0; i<numServos; i++)
+    {
+      uint8_t id = dynamixelList[i];
+      if(updateCom[i])
+      {
+        if(!twoStateIO)
+        {
+          bytewiseActuatorCommand[0] = DXL_LOBYTE(comPos[i]);
+          bytewiseActuatorCommand[1] = DXL_HIBYTE(comPos[i]);
+        }
+        else
+        {
+          bytewiseActuatorCommand[0] = DXL_LOBYTE(comPos[i]);
+          bytewiseActuatorCommand[1] = DXL_HIBYTE(comPos[i]);
+          bytewiseActuatorCommand[2] = DXL_LOBYTE(comVel[i]);
+          bytewiseActuatorCommand[3] = DXL_HIBYTE(comVel[i]);
+        }
+        
+        dxlAddparamResult = groupSyncWrite.addParam(id, bytewiseActuatorCommand);
+        updateCom[i] = false;
+      }
+      
+      if(!twoStateIO)
+      {
+        commRes = packetHandler->read2ByteTxRx(portHandler,id,ADDR_PRESENT_POSITION,&readPos,&error);
+        comPos[i] = readPos;
+      }
+      else
+      {
+        uint32_t outputWord;
+        commRes = packetHandler->read4ByteTxRx(portHandler,id,ADDR_PRESENT_POSITION,&outputWord,&error);
+        readPos = DXL_LOWORD(outputWord);
+        //
+        readVel = DXL_HIWORD(outputWord);
+        
+        if(readVel >= 0 && readVel < 1024)
+        {
+          //do nothing
+        }
+        else
+        {
+          readVel -= 1024;
+        }
+        //
+
+        comPos[i] = readPos;
+        comVel[i] = readVel;
+        updateCom[i] = true;
+
+        #ifdef DEBUG
+        Serial3.print(i);
+        Serial3.print(": ");
+        Serial3.println(comPos[i]);
+        #endif
+      }
+    }
+    dxlCommResult = groupSyncWrite.txPacket();
+    groupSyncWrite.clearParam();
+
+    //blinkDone();
   }
   toListen = true;
   loopCounter = 0;
@@ -538,12 +599,12 @@ void setup() {
 
         comPos[i] = readPos;
         comVel[i] = readVel;
+        updateCom[i] = true;
       }
     }
     dxlCommResult = groupSyncWrite.txPacket();
     groupSyncWrite.clearParam();
 
-    blinkDone();
   }
 }
 
