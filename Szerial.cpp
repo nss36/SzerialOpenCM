@@ -209,6 +209,13 @@ int Szerial::readMsgs()
 				if(stream->read() == 0xff)
 				{
 					vals[0] = 0xff;
+					
+					/*
+					Serial3.print("0: ");
+					Serial3.print(vals[0]);
+					Serial3.print(", ");
+					*/
+					
 					checksum = (int) vals[0];
 					index = 1;
 					messageID  = -1;
@@ -219,6 +226,13 @@ int Szerial::readMsgs()
 			else if(index == 1)
 			{
 				vals[index] = (unsigned char) stream->read();
+				
+				/*
+				Serial3.print("1: ");
+				Serial3.print(vals[index]);
+				Serial3.print(", ");
+				*/
+				
 				if(vals[index] == 0xff)
 				{            
 					checksum += (int) vals[index];
@@ -232,6 +246,12 @@ int Szerial::readMsgs()
 			{
 				vals[index] = (unsigned char) stream->read();
 				messageID = vals[index];
+				
+				/*
+				Serial3.print("2: ");
+				Serial3.print(vals[index]);
+				Serial3.print(", ");
+				*/
 
 				checksum += (int) vals[index];
 				index++;
@@ -241,7 +261,13 @@ int Szerial::readMsgs()
 			{
 				vals[index] = (unsigned char) stream->read();
 				packetSize = vals[index];
-
+				
+				/*
+				Serial3.print("3: ");
+				Serial3.print(vals[index]);
+				Serial3.print(", ");
+				*/
+				
 				//If the message size is greater than 128 then something is wrong. Start over.
 				if(packetSize > 128)
 					index = -1;
@@ -272,7 +298,9 @@ int Szerial::readMsgs()
 						if(messageID == 3)
 						{
 							simStarting = true;
-							return 2;
+							checksum += (int) vals[index];
+							index++;
+							
 						}
 						else if(messageID == 2)
 							writeAllMsgs();
