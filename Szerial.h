@@ -118,8 +118,9 @@ class Szerial
 	
 	void clearChanged();
 	
-	int getAnalogInIndex(unsigned int index);
-	int getAnalogOutIndex(unsigned int index);
+	unsigned int readMUXanalog(unsigned int index);	
+	const int getMUXdigitalOut(unsigned int index);
+	const int getMUXanalogIn(unsigned int index);
 
 	private:
 
@@ -157,10 +158,13 @@ class Szerial
 	bool simStarting = false;
 	
 	//These values are microcontroller-specific.
-	const int analogInIndices[5] = {5,6,7,8,9};
-	const int numAnalogInIndices = 5;
-	const int analogOutIndices[5] = {0,1,2,3,4};
+	const int analogMUXdigitalOut[4] = {6,7,8,9};
+	const int numDigitalOutIndices = 4;
+	const int analogMUXanalogIn[5] = {0,1,2,3,4};
 	const int numAnalogOutIndices = 5;
+	const int MUXdigitalOut[18] = {6,7,8,9,6,7,8,9,6,7,8,9,6,7,8,9,6,7};
+	const int MUXanalogIn[18] =   {4,4,4,4,3,3,3,3,2,2,2,2,1,1,1,1,0,0};
+	void resetMUXanalog(unsigned int maxIndex);
 	
 	union id_tag {
 	 unsigned char bval;

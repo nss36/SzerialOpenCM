@@ -37,6 +37,7 @@ Szerial::Szerial(){
 	outData = NULL;
 	inChanged = NULL;
 	dataChanged = false;
+	resetMUXanalog(numDigitalOutIndices);
 	
 	messageID  = -1;
 	packetSize = 0;
@@ -79,6 +80,7 @@ Szerial::Szerial(USBSerial *ss, unsigned int numServos, unsigned int inAnalog, u
 	clearInData();
 	clearChanged();
 	clearOutData();
+	resetMUXanalog(numDigitalOutIndices);
 }
 
 Szerial::~Szerial()
@@ -406,25 +408,6 @@ void Szerial::setSimStartingFalse(){
 	simStarting = false;
 }
 
-int Szerial::getAnalogInIndex(unsigned int index)
-{
-	if(index < numAnalogInIndices)
-	{
-		return analogInIndices[index];
-	}
-	return 255;
-}
-
-
-int Szerial::getAnalogOutIndex(unsigned int index)
-{
-	if(index < numAnalogOutIndices)
-	{
-		return analogOutIndices[index];
-	}
-	return 255;
-}
-
 unsigned int Szerial::inputContains(unsigned int id)
 {
 	for(int i=0;i<inDataTotal;i++)
@@ -436,3 +419,52 @@ unsigned int Szerial::inputContains(unsigned int id)
 	}
 	return 255;
 }
+
+unsigned int Szerial::readMUXanalog(unsigned int index)
+{
+	//Make sure no other pins are set to high
+	/*
+	for(int i=0;i<numDigitalOutIndices;i++)
+	{
+		digitalWrite(analogMUXdigitalOut[i],LOW);
+	}
+	*/
+	
+	digitalWrite(MUXdigitalOut[index],HIGH);
+	unsigned int reading = analogRead(MUXanalogIn[index]);
+	digitalWrite(MUXdigitalOut[index],LOW);
+	return reading;
+}
+
+void Szerial::resetMUXanalog(unsigned int maxIndex)
+{
+	for(int i=0;i<maxIndex;i++)
+	{
+		digitalWrite(MUXdigitalOut[maxIndex],LOW);
+	}
+}
+
+const int Szerial::getMUXdigitalOut(unsigned int index)
+{
+	return MUXdigitalOut[index]; 
+}
+
+const int Szerial::getMUXanalogIn(unsigned int index)
+{
+	return MUXanalogIn[index]; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
