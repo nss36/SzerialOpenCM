@@ -423,7 +423,7 @@ void setup() {
       //dataIndex is the index in the AnimatData object.
       //animatID is the id of the item (AnimatData.id.ival). This is the value set in the AnimatLab GUI.
       int animatID = i+100; //100 because analog output
-      int reading = szerial.readMUXanalog(i);
+      int reading = szerial.readMUXanalog(i) - initReadAnalog[i];
       
       if(reading >= 0 && abs(reading - prevReadAnalog[i])>=TRANSMISSION_THRESHOLD)
       {
