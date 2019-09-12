@@ -48,8 +48,8 @@ Szerial::Szerial(USBSerial *ss, unsigned int numServos, unsigned int inAnalog, u
     status = 0;
 	stream = ss;
 	
-	inDataTotal = numServos+inAnalog;
-	outDataTotal = numServos+outAnalog;	
+	inDataTotal = numServos+inAnalog; //Number of inputs from AnimatLab, which will need to be sent to microcontroller.
+	outDataTotal = numServos+outAnalog; //Number of outputs from AnimatLab, which will be sent from the microcontroller.
 	inDataCount = 0;
 	outDataCount = 0;
 	
@@ -155,15 +155,29 @@ bool Szerial::getData(unsigned int index, AnimatData &data)
 
 bool Szerial::addData(unsigned int id, int val)
 {
+	/*
+	Serial3.print("addData ID: ");
+	Serial3.print(id);
+	Serial3.print(" outDataCount: ");
+	Serial3.print(outDataCount);
+	Serial3.print(" outDataTotal: ");
+	Serial3.print(outDataTotal);
+	*/
+		
 	if(outDataCount < outDataTotal)
 	{
+		//Serial3.println(" added!");
+		
 		outData[outDataCount].id.ival = id;
 		outData[outDataCount].value.ival = val;
 		outDataCount++;
 		return true;
 	}
 	else
+	{
+		//Serial3.println(" not added :(");
 		return false;
+	}
 }
 
 void Szerial::setInDataValue(int id, int val) 
