@@ -38,7 +38,7 @@ uint16_t readVel;
 uint16_t prevReadPos[numServos];
 uint16_t prevReadVel[numServos];
 uint16_t modelNumber;
-uint16_t writeLength;
+uint16_t writeLength = 4;
 uint16_t readLength;
 uint8_t error;
 bool toRead = true;
@@ -79,18 +79,6 @@ void setup() {
   /////////////////////////////////////////////////////////////////////////
   dynamixel::PortHandler *portHandler = dynamixel::PortHandler::getPortHandler(DEVICENAME);
   dynamixel::PacketHandler *packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
-
-  if(twoStateIO)
-  {
-    writeLength = 4;
-    readLength = 4;
-  }
-  else
-  {
-    writeLength = 2;
-    readLength = 2;
-//    uint8_t bytewiseActuatorCommand[2];
-  }
 
   dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, ADDR_GOAL_POSITION, writeLength);
   dynamixel::GroupSyncRead groupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, readLength);
@@ -298,32 +286,20 @@ void setup() {
         
         if(updateCom[i])
         {
-          if(!twoStateIO)
-          {
-            bytewiseActuatorCommand[0] = DXL_LOBYTE(comPos[i]);
-            bytewiseActuatorCommand[1] = DXL_HIBYTE(comPos[i]);
-            #ifdef DEBUG
-            Serial3.print("Write: ");
-            Serial3.print(id);
-            Serial3.print(" ");
-            Serial3.println(comPos[i]);
-            #endif
-          }
-          else
-          {
-            bytewiseActuatorCommand[0] = DXL_LOBYTE(comPos[i]);
-            bytewiseActuatorCommand[1] = DXL_HIBYTE(comPos[i]);
-            bytewiseActuatorCommand[2] = DXL_LOBYTE(comVel[i]);
-            bytewiseActuatorCommand[3] = DXL_HIBYTE(comVel[i]);
-            #ifdef DEBUG
-            Serial3.print("Write: ");
-            Serial3.print(id);
-            Serial3.print(" ");
-            Serial3.print(comPos[i]);
-            Serial3.print(" ");
-            Serial3.println(comVel[i]);
-            #endif
-          }
+          
+          bytewiseActuatorCommand[0] = DXL_LOBYTE(comPos[i]);
+          bytewiseActuatorCommand[1] = DXL_HIBYTE(comPos[i]);
+          bytewiseActuatorCommand[2] = DXL_LOBYTE(comVel[i]);
+          bytewiseActuatorCommand[3] = DXL_HIBYTE(comVel[i]);
+          #ifdef DEBUG
+          Serial3.print("Write: ");
+          Serial3.print(id);
+          Serial3.print(" ");
+          Serial3.print(comPos[i]);
+          Serial3.print(" ");
+          Serial3.println(comVel[i]);
+          #endif
+          
           dxlAddparamResult = groupSyncWrite.addParam(id, bytewiseActuatorCommand);
           updateCom[i] = false;
         }
@@ -499,18 +475,11 @@ void setup() {
       
       if(updateCom[i])
       {
-        if(!twoStateIO)
-        {
-          bytewiseActuatorCommand[0] = DXL_LOBYTE(comPos[i]);
-          bytewiseActuatorCommand[1] = DXL_HIBYTE(comPos[i]);
-        }
-        else
-        {
-          bytewiseActuatorCommand[0] = DXL_LOBYTE(comPos[i]);
-          bytewiseActuatorCommand[1] = DXL_HIBYTE(comPos[i]);
-          bytewiseActuatorCommand[2] = DXL_LOBYTE(comVel[i]);
-          bytewiseActuatorCommand[3] = DXL_HIBYTE(comVel[i]);
-        }
+        bytewiseActuatorCommand[0] = DXL_LOBYTE(comPos[i]);
+        bytewiseActuatorCommand[1] = DXL_HIBYTE(comPos[i]);
+        bytewiseActuatorCommand[2] = DXL_LOBYTE(0);
+        bytewiseActuatorCommand[3] = DXL_HIBYTE(0);
+        
         dxlAddparamResult = groupSyncWrite.addParam(id, bytewiseActuatorCommand);
         updateCom[i] = false;
       }
