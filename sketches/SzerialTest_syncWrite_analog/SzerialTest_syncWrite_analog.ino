@@ -9,7 +9,7 @@
 //USER INPUT: SET THE VALUES BELOW TO MATCH YOUR PARTICULAR ROBOT.
 /////////////////////////////////////////////////////////////////////////
 const uint8_t numServos = 18; //This could be any type of actuator, to which you give a command, and read an output. 
-const uint8_t numAnalogSensors = 18; //These are the uController's outputs back to AnimatLab; e.g. potentiometer readings, strain gages, etc. 
+const uint8_t numAnalogSensors = 1; //These are the uController's outputs back to AnimatLab; e.g. potentiometer readings, strain gages, etc. 
 int loopDuration = 50; //ms
 bool twoStateIO = true; //If this is true, then the second input to szerial must be 2*numServos. Otherwise, it is numServos.
 /////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ bool twoStateIO = true; //If this is true, then the second input to szerial must
 /////////////////////////////////////////////////////////////////////////
 
 //To use USBSerial, we need to change references to HardwareSerial in AnimatSerial.cpp to USBSerial instead.
-Szerial szerial(&SerialUSB, 2*numServos, numAnalogSensors, 0);
+Szerial szerial(&SerialUSB, 2*numServos, 0, numAnalogSensors);
 
 //Instantiate data and axcm objects.
 AnimatData data;
@@ -222,6 +222,7 @@ void setup() {
     if(szerial.getSimStarting())
     {
       waiting = false;
+      prevSendTime = millis();
     }
     //blinkDone();
   }
@@ -343,6 +344,10 @@ void setup() {
          * Dynamixel returns positive velocity 0-1023, negative velocity 1024-2047.
          * To preserve the "sign," we'll add 1024 to positive velocity, and compute
          * negative velocity as 2048 - x.
+         * This way, when: 
+         *    the actual velocity is 0, the readVel is 1024
+         *    the actual velocity is -|maxVel|, the readVel is 0.
+         *    the actual velocity is |maxVel|, the readVel is 2047
          */
         if(readVel >= 0 && readVel < 1024)
         {
@@ -352,6 +357,8 @@ void setup() {
         {
           readVel = 2048 - readVel;
         }
+
+        dataChanged = (loopCounter < 1 || abs(readPos - prevReadPos[id])>=TRANSMISSION_THRESHOLD || abs(readVel - prevReadVel[id])>=TRANSMISSION_THRESHOLD);
         
         #ifdef DEBUG
         Serial3.print("Read: ");
@@ -359,10 +366,18 @@ void setup() {
         Serial3.print(" ");
         Serial3.print(readPos);
         Serial3.print(" ");
-        Serial3.println(readVel);
+        Serial3.print(readVel);
+        Serial3.print(" dataChanged: ");
+        if(dataChanged)
+        {
+          Serial3.print("true ");
+        }else{
+          Serial3.print("false ");
+        }
+        Serial3.println(loopCounter);
         #endif
 
-        dataChanged = (loopCounter < 1 || abs(readPos - prevReadPos[id])>=TRANSMISSION_THRESHOLD || abs(readVel - prevReadVel[id])>=TRANSMISSION_THRESHOLD);
+        
       }
   
       //If the servo position was read successfully, and if this is the first time step of the AnimatLab
@@ -424,7 +439,7 @@ void setup() {
     
     #ifdef DEBUG
     if (dataToSend)
-      Serial3.println();
+      Serial3.println(" SENDING ");
     #endif
   
     //If one of the robot's states has changed, send it to AnimatLab.

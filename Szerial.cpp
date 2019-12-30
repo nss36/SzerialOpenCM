@@ -163,7 +163,14 @@ bool Szerial::addData(unsigned int id, int val)
 	Serial3.print(" outDataTotal: ");
 	Serial3.print(outDataTotal);
 	*/
-		
+	
+	/*
+	Serial3.print("inDataTotal: ");
+	Serial3.print(inDataTotal);
+	Serial3.print(", outDataTotal: ");
+	Serial3.println(outDataTotal);
+	*/
+	
 	if(outDataCount < outDataTotal)
 	{
 		//Serial3.println(" added!");

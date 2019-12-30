@@ -137,8 +137,8 @@ class Szerial
 	unsigned int *outIDs;
 	
 	unsigned int numServos;
-	unsigned int inDataTotal;
-	unsigned int outDataTotal;
+	unsigned int inDataTotal; //Incoming data channels (servo commands, LED status, etc.)
+	unsigned int outDataTotal; //Outgoing data channels (servo feedback, Analog sensors, etc.)
 
 	unsigned int inDataCount;
 	unsigned int outDataCount;
