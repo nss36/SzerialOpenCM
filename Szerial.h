@@ -29,7 +29,7 @@
 #define AX_OFFSET 512
 #define MX_SLOPE 651.8986469044033
 #define MX_OFFSET 2048
-#define TRANSMISSION_THRESHOLD 2 //0, send every update. 1, only if it changes. Any higher number will make updates less frequent.
+#define TRANSMISSION_THRESHOLD 1 //0, send every update. 1, only if it changes. Any higher number will make updates less frequent.
 
 // Control table address (AX-12)
 #define ADDR_MODEL_NUMBER         0
@@ -53,6 +53,7 @@
 #define ADDR_PRESENT_VOLT         42
 #define ADDR_PRESENT_TEMP         43
 #define ADDR_IS_MOVING            46
+#define ADDR_PUNCH				  			48
 
 //Sentence structure:
 //255, 255 (start), 1 (new info incoming), X (total length of message), A (component ID), B, C (2 byte data), Y (checksum)
@@ -105,6 +106,7 @@ class Szerial
 	void writeResendMsg();
 	
 	bool isChanged();
+	bool anyMessageReceived();
 	bool isChanged(unsigned int id);
 	bool getData(unsigned int index, AnimatData &data);
 	bool addData(unsigned int id, int val);
@@ -133,6 +135,7 @@ class Szerial
 	AnimatData *outData;
 	bool *inChanged;
 	bool dataChanged;
+	bool messageReceived;
 	unsigned int *inIDs;
 	unsigned int *outIDs;
 	

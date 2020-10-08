@@ -127,6 +127,7 @@ void Szerial::clearOutData()
 void Szerial::clearChanged()
 {
 	dataChanged = false;
+	messageReceived = false;
 	if(inChanged)
 	{
 		for(int i=0; i<inDataTotal; i++)
@@ -140,6 +141,11 @@ bool Szerial::isChanged(unsigned int index)
 		return inChanged[index];
 	else
 		return false;
+}
+
+bool Szerial::anyMessageReceived()
+{
+	return messageReceived;
 }
 
 bool Szerial::getData(unsigned int index, AnimatData &data)
@@ -318,6 +324,7 @@ int Szerial::readMsgs()
 					}
 					else
 					{
+						messageReceived = true; //Nick, 20 Jan 20
 						if(messageID == 3)
 						{
 							simStarting = true;
